@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4c1d95">
+<title>Hòm Thư Góp Ý Giọng Nói - Tổ Dân Phố Khê Khẩu</title>
+<link rel="icon" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --purple-900:#3b1470; --purple-700:#5b21b6; --purple-600:#6d28d9;
+  --gold:#d4af37; --gold-light:#f6e7b4;
+  --ink:#1e1b26; --muted:#6b7280; --line:#e9e4f5; --bg:#f3f1fa;
+  --red:#ff3b30; --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;color:var(--ink);
+  background:
+    radial-gradient(600px 300px at 10% -5%, #e9defc 0%, transparent 60%),
+    radial-gradient(600px 300px at 100% 0%, #f7ecc8 0%, transparent 55%),
+    var(--bg);
+  min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:flex-start;
+  padding:calc(16px + env(safe-area-inset-top)) 12px calc(20px + env(safe-area-inset-bottom));
+}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.wrap{width:100%;max-width:440px}
+/* Banner */
+.banner{
+  position:relative;overflow:hidden;text-align:center;color:#fff;
+  background:linear-gradient(150deg,var(--purple-900) 0%,var(--purple-700) 60%,#7c3aed 100%);
+  border-radius:var(--radius) var(--radius) 0 0;padding:30px 20px 66px;
+  border:1px solid #2e1065;border-bottom:none;
+}
+.banner::before{content:"";position:absolute;inset:0;opacity:.14;
+  background-image:radial-gradient(#fff 1px,transparent 1px);background-size:18px 18px;}
+.banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+  background:linear-gradient(90deg,var(--gold),#f9e79a,var(--gold));}
+.banner .badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;color:var(--gold-light);
+  border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:5px 12px;margin-bottom:12px;background:rgba(255,255,255,.08)}
+.banner .live{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.25)}
+.logo{width:104px;height:104px;border-radius:50%;object-fit:cover;background:#fff;
+  border:4px solid var(--gold);box-shadow:0 6px 20px rgba(0,0,0,.35);margin-bottom:12px;position:relative}
+.banner h1{font-size:21px;font-weight:800;letter-spacing:.4px;position:relative;text-wrap:balance}
+.banner h1 span{color:var(--gold-light)}
+.banner p{font-size:12.5px;opacity:.9;margin-top:6px;line-height:1.6;position:relative}
+/* Card */
+.card{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 var(--radius) var(--radius);
+  padding:0 18px 20px;box-shadow:0 18px 45px rgba(59,20,112,.14);position:relative;margin-top:-44px}
+/* Steps */
+.steps{display:flex;gap:6px;padding:10px 2px 4px}
+.step{flex:1;text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.step i{display:flex;align-items:center;justify-content:center;width:30px;height:30px;margin:0 auto 5px;
+  border-radius:50%;background:#f1edfb;color:var(--purple-700);font-size:13px;font-style:normal}
+.step.done i{background:var(--purple-700);color:#fff}
+.step.done{color:var(--purple-700)}
+.section{border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px;background:#fff}
+.section.active{border-color:var(--purple-600);box-shadow:0 0 0 3px rgba(109,40,217,.12)}
+.section-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--purple-900);margin-bottom:12px}
+.section-title .num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:none;
+  border-radius:8px;background:linear-gradient(135deg,var(--purple-700),#8b5cf6);color:#fff;font-size:12px}
+.form-group{margin-bottom:12px}
+.form-group:last-child{margin-bottom:0}
+label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
+label i{color:var(--purple-600);margin-right:5px}
+.req{color:var(--red)}
+.form-control{width:100%;padding:13px 14px;border:1.5px solid #d9d3ea;border-radius:12px;font-size:16px;outline:none;background:#faf9fe;transition:border .15s,box-shadow .15s;max-width:100%}
+.form-control::placeholder{color:#a5a0b8;font-size:14px}
+.form-control:focus{border-color:var(--purple-600);box-shadow:0 0 0 3px rgba(109,40,217,.13);background:#fff}
+.hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+/* Mic */
+.mic-section{text-align:center;padding:6px 0 2px}
+.mic-btn{width:92px;height:92px;border-radius:50%;border:4px solid #ffdada;background:linear-gradient(160deg,#ff5a52,var(--red));
+  color:#fff;font-size:34px;cursor:pointer;display:inline-flex;justify-content:center;align-items:center;
+  box-shadow:0 8px 22px rgba(255,59,48,.4);transition:transform .15s}
+.mic-btn:active{transform:scale(.95)}
+.mic-btn.recording{animation:pulse 1.2s infinite;border-color:#ffb3ae}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,59,48,.65)}70%{box-shadow:0 0 0 20px rgba(255,59,48,0)}100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}}
+.mic-hint{display:inline-block;margin-top:12px;font-weight:700;font-size:13px;color:var(--purple-700);
+  background:#f1eafe;border-radius:999px;padding:7px 14px}
+.mic-hint.listening{color:#b91c1c;background:#fee2e2}
+textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
+.textarea-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.btn-clear{background:#fff;color:var(--red);border:1.5px solid #ffb4ae;min-height:44px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+/* Image */
+.image-upload-box{border:1.5px dashed #b79df0;border-radius:14px;padding:16px 12px;text-align:center;background:linear-gradient(180deg,#faf7ff,#f3efff);cursor:pointer;transition:border .15s,background .15s}
+.image-upload-box:hover{border-color:var(--purple-600)}
+.image-upload-box .art{width:46px;height:46px;border-radius:14px;background:#fff;border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;color:var(--purple-600);font-size:20px;margin-bottom:8px}
+.image-upload-box strong{display:block;font-size:13.5px;color:var(--purple-900)}
+.image-upload-box small{font-size:11.5px;color:var(--muted)}
+.image-preview{margin-top:10px;display:none}
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.img-cell{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.img-cell img{display:block;width:100%;height:86px;object-fit:cover}
+.img-cell button{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:none;
+  background:rgba(220,38,38,.92);color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* Submit */
+.btn-submit{width:100%;border:none;border-radius:14px;padding:15px;min-height:54px;margin-top:16px;cursor:pointer;
+  font-size:15px;font-weight:800;letter-spacing:.4px;color:#fff;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--purple-700),#8b5cf6 60%,#a855f7);
+  box-shadow:0 10px 24px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;gap:9px}
+.btn-submit:active{transform:scale(.99)}
+.btn-submit:disabled{opacity:.6;cursor:wait}
+.secure{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11.5px;color:var(--muted)}
+.sos{background:linear-gradient(135deg,#991b1b,#dc2626);border-radius:14px;padding:12px;margin-top:14px;color:#fff}
+.sos-title{font-size:12.5px;font-weight:800;text-align:center;margin-bottom:10px;line-height:1.5}
+.sos-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.sos-btns a{flex:0 1 calc(33.333% - 6px);min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#fff;color:#b91c1c;border-radius:10px;padding:10px 4px;font-size:11px;font-weight:700;text-decoration:none;min-height:56px;line-height:1.35;text-align:center}
+.sos-btns a i{font-size:18px}
+.channels{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+.channels-title{font-size:12.5px;font-weight:800;text-align:center;color:var(--purple-900);margin-bottom:10px;line-height:1.5}
+.channels .sos-btns a{color:var(--purple-700)}
+.divider{display:flex;align-items:center;gap:8px;margin:14px 4px 0}
+.divider::before,.divider::after{content:"";height:1px;flex:1;background:var(--line)}
+.divider span{width:7px;height:7px;border-radius:50%;background:var(--gold);flex:none}
+.contact-more{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#faf9fe;overflow:hidden}
+.contact-more summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px;min-height:48px;font-size:13px;font-weight:700;color:var(--purple-700);text-align:center}
+.contact-more summary::-webkit-details-marker{display:none}
+.contact-more summary .chev{transition:transform .2s}
+.contact-more[open] summary .chev{transform:rotate(180deg)}
+.contact-more img{display:block;width:100%;height:auto;border-top:1px solid var(--line)}
+.footer{display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:12px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;white-space:nowrap}
+.footer img{width:30px;height:30px;flex:none;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120px);
+  background:var(--purple-900);color:#fff;border:1px solid var(--gold);border-radius:14px;padding:13px 18px;font-size:13.5px;font-weight:600;
+  box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;transition:all .3s;z-index:50;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast i{color:var(--gold-light);margin-right:7px}
+@media (max-width:480px){
+  body{padding:0 0 env(safe-area-inset-bottom);background:var(--bg);display:block}
+  .wrap{max-width:100%}
+  .banner{border-radius:0;padding:26px 16px 62px}
+  .card{border-left:none;border-right:none;border-radius:0 0 0 0;margin-top:-40px;padding:0 14px 18px}
+  .logo{width:88px;height:88px}
+  .banner h1{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){.mic-btn.recording{animation:none}.toast{transition:none}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner">
+    <div class="badge"><span class="live"></span> Tổ dân phố tiếp nhận thông tin 24/7</div><br>
+    <img src="logo.jpg" alt="Logo Tổ Dân Phố Khê Khẩu" class="logo">
+    <h1>HÒM THƯ GÓP Ý <span>GIỌNG NÓI</span></h1>
+    <p>Tổ Dân Phố Khê Khẩu – Phường Trần Nhân Tông<br>Thành phố Hải Phòng</p>
+  </div>
+
+  <div class="card">
+    <div class="sos">
+      <div class="sos-title"><i class="fa-solid fa-triangle-exclamation"></i> KHẨN CẤP — Mất an ninh, trật tự thì gọi ngay</div>
+      <div class="sos-btns">
+        <a href="tel:02203882345"><i class="fa-solid fa-phone"></i>Trực ban<br>Công an phường</a>
+        <a href="tel:0982811622"><i class="fa-solid fa-user-shield"></i>Cảnh sát<br>khu vực</a>
+        <a href="tel:0967621333"><i class="fa-solid fa-shield-halved"></i>Tổ PCTP<br>CAP</a>
+        <a href="tel:0382777283"><i class="fa-solid fa-people-roof"></i>Tổ ANTT<br>cơ sở</a>
+        <a href="tel:0989389835"><i class="fa-solid fa-house"></i>Tổ trưởng<br>TDP</a>
+      </div>
+    </div>
+    <details class="contact-more">
+      <summary><i class="fa-solid fa-address-book"></i> Xem đầy đủ số liên hệ an ninh, trật tự <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <img src="Thông tin liên lạc an ninh.jpg" alt="Thông tin liên hệ an ninh trật tự TDP Khê Khẩu — Công an phường, Tổ ANTT cơ sở, Tổ Dân Phố" loading="lazy">
+    </details>
+    <div class="channels">
+      <div class="channels-title"><i class="fa-solid fa-bullhorn"></i> THEO DÕI CÁC KÊNH THÔNG TIN CHÍNH THỨC CỦA TDP</div>
+      <div class="sos-btns">
+        <a href="https://www.facebook.com/KheKhauTNT" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i>Nhóm<br>Facebook</a>
+        <a href="https://zalo.me/g/ansjdc933" target="_blank" rel="noopener"><i class="fa-solid fa-comments"></i>Nhóm<br>Zalo</a>
+        <a href="https://tammi.vn/group/qr/1790147905011" target="_blank" rel="noopener"><i class="fa-solid fa-users"></i>Nhóm<br>Tammi</a>
+      </div>
+    </div>
+    <div class="divider"><span></span></div>
+    <div class="steps">
+      <div class="step" id="st1"><i class="fa-solid fa-user"></i>Thông tin</div>
+      <div class="step" id="st2"><i class="fa-solid fa-microphone"></i>Nội dung</div>
+      <div class="step" id="st3"><i class="fa-solid fa-camera"></i>Hình ảnh</div>
+    </div>
+
+    <form id="feedbackForm" novalidate>
+      <div class="section active" id="sec1">
+        <div class="section-title"><span class="num">1</span> Thông tin người góp ý</div>
+        <div class="form-group">
+          <label for="fullname"><i class="fa-solid fa-user"></i>Họ và tên người góp ý <span class="req">*</span></label>
+          <input type="text" id="fullname" class="form-control" placeholder="VD: Nguyễn Văn An" required autocomplete="name" enterkeyhint="next">
+        </div>
+        <div class="form-group">
+          <label for="phone"><i class="fa-solid fa-phone"></i>Số điện thoại <span class="req">*</span></label>
+          <input type="tel" id="phone" class="form-control" placeholder="VD: 0912 345 678" required inputmode="numeric" autocomplete="tel" enterkeyhint="next">
+          <div class="hint">Thông tin người góp ý được bảo mật, số điện thoại chỉ sử dụng để liên hệ xác minh thông tin.</div>
+        </div>
+      </div>
+
+      <div class="section" id="sec2">
+        <div class="section-title"><span class="num">2</span> Nội dung góp ý bằng giọng nói</div>
+        <div class="mic-section">
+          <button type="button" class="mic-btn" id="micBtn" aria-label="Bắt đầu ghi âm giọng nói">
+            <i class="fa-solid fa-microphone"></i>
+          </button><br>
+          <div class="mic-hint" id="micHint">Chạm vào micro để bắt đầu nói</div>
+        </div>
+        <div style="margin-top:12px">
+          <label for="speechText"><i class="fa-solid fa-pen-to-square"></i>Nội dung (tự gõ hoặc từ giọng nói)</label>
+          <textarea id="speechText" class="form-control" placeholder="Nội dung sẽ tự chuyển thành văn bản tại đây — bạn có thể sửa lại trước khi gửi..."></textarea>
+          <div class="textarea-footer">
+            <span id="charCount">0 ký tự</span>
+            <button type="button" class="btn-clear" id="clearBtn"><i class="fa-solid fa-trash-can"></i> Xóa</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sec3">
+        <div class="section-title"><span class="num">3</span> Hình ảnh minh chứng</div>
+        <div class="image-upload-box" onclick="document.getElementById('imageInput').click()">
+          <div class="art"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <strong>Chạm để chụp / chọn ảnh (tối đa 5)</strong>
+          <small>Mỗi ảnh dưới 5MB — ảnh tự nén trước khi gửi</small>
+          <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="handleImageSelect(event)">
+        </div>
+        <div class="image-preview" id="imagePreviewContainer">
+          <div class="img-grid" id="imgGrid"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Gửi phản ánh về Tổ Dân Phố</button>
+      <div class="secure"><i class="fa-solid fa-lock"></i> Thông tin được gửi thẳng về Tổ Dân Phố</div>
+    </form>
+
+    <div class="footer">
+      <img src="logo.jpg" alt="logo nhỏ">
+      <span>TDP Khê Khẩu – P. Trần Nhân Tông, TP. Hải Phòng</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg"></span></div>
+
+<script>
+    // TODO: thay bằng Firebase của Tổ Dân Phố Khê Khẩu
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_SFBBa-nyabs76mKFV5_Hy6DzZSJtTak",
+      authDomain: "gop-y-ap-tong-cui.firebaseapp.com",
+      databaseURL: "https://gop-y-ap-tong-cui-default-rtdb.firebaseio.com",
+      projectId: "gop-y-ap-tong-cui",
+      storageBucket: "gop-y-ap-tong-cui.firebasestorage.app",
+      messagingSenderId: "1018896034074",
+      appId: "1:1018896034074:web:e86ecf7f33d78c571724a3",
+      measurementId: "G-N4Q3J49HDP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const micBtn = document.getElementById('micBtn');
+    const micHint = document.getElementById('micHint');
+    const speechText = document.getElementById('speechText');
+    const clearBtn = document.getElementById('clearBtn');
+    const charCount = document.getElementById('charCount');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    let toastTimer;
+    function showToast(msg){
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove('show'), 3500);
+    }
+
+    // Đánh dấu bước đã làm
+    function refreshSteps(){
+      document.getElementById('st1').classList.toggle('done',
+        document.getElementById('fullname').value.trim() && document.getElementById('phone').value.trim());
+      document.getElementById('st2').classList.toggle('done', !!speechText.value.trim());
+      document.getElementById('st3').classList.toggle('done', attachedImages.length > 0);
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isRecording = false;
+    let finalTranscript = '';
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'vi-VN';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        // Chỉ cộng dồn kết quả MỚI (resultIndex) — bản cũ duyệt lại từ đầu nên lặp từ
+        recognition.onresult = (event) => {
+            let interim = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const text = event.results[i][0].transcript;
+                if (event.results[i].isFinal) finalTranscript += text;
+                else interim += text;
+            }
+            speechText.value = finalTranscript + interim;
+            updateCharCount();
+        };
+
+        recognition.onerror = () => stopRecording();
+        recognition.onend = () => { if (isRecording) stopRecording(); };
+    } else {
+        micHint.textContent = 'Trình duyệt không hỗ trợ micro — vui lòng gõ chữ';
+        micHint.classList.remove('listening');
+    }
+
+    micBtn.addEventListener('click', () => {
+        if (!recognition) {
+            showToast('Trình duyệt không hỗ trợ giọng nói — dùng Chrome hoặc Edge');
+            return;
+        }
+        if (!isRecording) {
+            try {
+                // Nối tiếp vào chữ đã có (tự gõ hoặc lần nói trước), không ghi đè
+                finalTranscript = speechText.value ? speechText.value + ' ' : '';
+                recognition.start();
+                isRecording = true;
+                micBtn.classList.add('recording');
+                micHint.textContent = 'Đang lắng nghe... chạm lại để dừng';
+                micHint.classList.add('listening');
+            } catch (err) { /* mic bận */ }
+        } else { stopRecording(); }
+    });
+
+    function stopRecording() {
+        isRecording = false;
+        if (recognition) try{ recognition.stop(); }catch(e){}
+        micBtn.classList.remove('recording');
+        micHint.textContent = 'Chạm vào micro để bắt đầu nói';
+        micHint.classList.remove('listening');
+    }
+
+    function updateCharCount() {
+        charCount.textContent = `${speechText.value.length} ký tự`;
+        refreshSteps();
+    }
+
+    speechText.addEventListener('input', updateCharCount);
+    document.getElementById('fullname').addEventListener('input', refreshSteps);
+    document.getElementById('phone').addEventListener('input', refreshSteps);
+    clearBtn.addEventListener('click', () => { speechText.value = ''; finalTranscript = ''; updateCharCount(); });
+
+    const MAX_IMAGES = 5;
+    let attachedImages = [];
+
+    function renderPreviews() {
+        const grid = document.getElementById('imgGrid');
+        grid.innerHTML = attachedImages.map((src, i) =>
+          `<div class="img-cell"><img src="${src}" alt="Ảnh minh chứng ${i+1}">` +
+          `<button type="button" onclick="removeImageAt(${i})" aria-label="Xóa ảnh ${i+1}"><i class="fa-solid fa-xmark"></i></button></div>`
+        ).join('');
+        document.getElementById('imagePreviewContainer').style.display = attachedImages.length ? 'block' : 'none';
+        refreshSteps();
+    }
+
+    function compressToBase64(file, done) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxWidth = 800;
+                let width = img.width, height = img.height;
+                if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
+                canvas.width = width; canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                done(canvas.toDataURL('image/jpeg', 0.7));
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function handleImageSelect(event) {
+        const files = [...event.target.files];
+        event.target.value = '';
+        if (!files.length) return;
+        const room = MAX_IMAGES - attachedImages.length;
+        if (room <= 0) { showToast(`Tối đa ${MAX_IMAGES} ảnh — xóa bớt rồi thêm`); return; }
+        if (files.length > room) showToast(`Chỉ thêm được ${room} ảnh nữa`);
+        files.slice(0, room).forEach(file => {
+            if (file.size > 5 * 1024 * 1024) { showToast(`Ảnh "${file.name}" quá lớn — bỏ qua`); return; }
+            compressToBase64(file, (base64) => { attachedImages.push(base64); renderPreviews(); });
+        });
+    }
+
+    function removeImageAt(i) {
+        attachedImages.splice(i, 1);
+        renderPreviews();
+    }
+
+    function clearImages() {
+        attachedImages = [];
+        renderPreviews();
+    }
+
+    // Gửi email về Gmail Tổ Dân Phố qua FormSubmit (miễn phí, không backend).
+    // Ảnh base64 quá nặng nên KHÔNG gửi qua email — xem ảnh trong Firebase.
+    function sendMailNotification({fullname, phone, content, imageCount}) {
+      return fetch('https://formsubmit.co/ajax/khekhau.trannhantong.hp@gmail.com', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify({
+          _subject: `[GÓP Ý] ${fullname} – ${phone}`,
+          _template: 'table',
+          _captcha: 'false',
+          'Họ và tên': fullname,
+          'Số điện thoại': phone,
+          'Nội dung': content || '(chỉ gửi kèm ảnh)',
+          'Số ảnh minh chứng': imageCount ? `${imageCount} ảnh — xem trong Firebase` : 'Không',
+          'Thời gian': new Date().toLocaleString('vi-VN')
+        })
+      }).then(r => { if (!r.ok) throw new Error('mail ' + r.status); });
+    }
+
+    // Chống spam phía máy người gửi: mỗi máy 5 phút gửi 1 lần
+    function clientCooldownOk() {
+      try {
+        const last = +localStorage.getItem('kk_last_sent') || 0;
+        return Date.now() - last > 5 * 60 * 1000;
+      } catch (e) { return true; }
+    }
+    function markSent() {
+      try { localStorage.setItem('kk_last_sent', String(Date.now())); } catch (e) {}
+    }
+
+    refreshSteps(); // trạng thái ban đầu: cả 3 bước đều mờ, làm xong bước nào sáng bước đó
+
+    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fullname = document.getElementById('fullname').value.trim();
+        const phone = document.getElementById('phone').value.trim().replace(/[\s.]/g, '');
+        const content = speechText.value.trim();
+
+        if (!fullname) { showToast('Vui lòng nhập họ và tên'); return; }
+        if (!/^0\d{9,10}$/.test(phone)) { showToast('Số điện thoại chưa đúng (10-11 số, bắt đầu bằng 0)'); return; }
+        if (!content && !attachedImages.length) { showToast('Nhập nội dung góp ý hoặc đính kèm ảnh'); return; }
+        if (!clientCooldownOk()) { showToast('Bạn vừa gửi rồi — đợi vài phút rồi gửi tiếp'); return; }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang gửi...';
+
+        // Ghi 2 nơi cùng lúc: phản ánh + mốc chống spam theo SĐT/ngày.
+        // Cần dán Firebase Rules (xem cuối file) thì mốc daily mới có tác dụng chặn.
+        const day = new Date().toISOString().slice(0, 10);
+        const key = database.ref('feedbacks').push().key;
+        const updates = {};
+        updates['feedbacks/' + key] = {
+            fullname, phone, content,
+            images: attachedImages,
+            imageUrl: attachedImages[0] || '',
+            timestamp: new Date().toISOString(),
+            status: 'pending'
+        };
+        updates['daily/' + phone + '/' + day] = true;
+
+        database.ref().update(updates).then(() => {
+            markSent();
+            showToast('Gửi thành công! Tham gia nhóm Tammi để nhận kết quả.');
+            const sentImageCount = attachedImages.length;
+            document.getElementById('feedbackForm').reset();
+            speechText.value = '';
+            finalTranscript = '';
+            clearImages();
+            updateCharCount();
+            // Gửi email nền — lỗi mail không làm mất phản ánh đã lưu
+            sendMailNotification({fullname, phone, content, imageCount: sentImageCount}).catch((mailErr) => {
+              console.error('Gửi mail thất bại:', mailErr);
+              showToast('Đã lưu phản ánh, nhưng email thất bại (' + (mailErr && mailErr.message || 'không rõ') + ').');
+            });
+        }).catch((err) => {
+            if (err && err.code === 'PERMISSION_DENIED') {
+              showToast('SĐT này hôm nay đã gửi phản ánh rồi — mai gửi tiếp nhé.');
+            } else {
+              showToast('Lỗi gửi dữ liệu: ' + (err && err.message || err));
+            }
+        }).finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi phản ánh về Tổ Dân Phố';
+        });
+    });
+</script>
+
+<!--
+  FIREBASE RULES — CHỐNG SPAM THEO SĐT (dán vào Firebase Console > Realtime Database > Rules > Publish):
+  Mỗi SĐT chỉ gửi được 1 phản ánh/ngày. Ai gửi lần 2 trong ngày sẽ bị từ chối và web báo
+  "SĐT này hôm nay đã gửi phản ánh rồi". Không tốn phí, không cần backend.
+
+  {
+    "rules": {
+      "feedbacks": { ".read": false, ".write": true },
+      "daily": {
+        "$phone": {
+          "$day": { ".read": false, ".write": "!data.exists()" }
+        }
+      }
+    }
+  }
+-->
+</body>
+</html>
