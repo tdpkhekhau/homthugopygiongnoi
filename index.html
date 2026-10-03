@@ -132,9 +132,9 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
 .contact-more summary .chev{transition:transform .2s}
 .contact-more[open] summary .chev{transform:rotate(180deg)}
 .contact-more img{display:block;width:100%;height:auto;border-top:1px solid var(--line)}
-.footer{display:flex;align-items:center;justify-content:center;gap:8px;
-  margin-top:12px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;white-space:nowrap}
-.footer img{width:30px;height:30px;flex:none;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.footer{display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-top:12px;font-size:10px;letter-spacing:-.2px;color:var(--muted);text-align:center;line-height:1.5;white-space:nowrap}
+.footer img{width:24px;height:24px;flex:none;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
 /* Toast */
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120px);
   background:var(--purple-900);color:#fff;border:1px solid var(--gold);border-radius:14px;padding:13px 18px;font-size:13.5px;font-weight:600;
@@ -142,12 +142,15 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast i{color:var(--gold-light);margin-right:7px}
 @media (max-width:480px){
-  body{padding:0 0 env(safe-area-inset-bottom);background:var(--bg);display:block}
-  .wrap{max-width:100%}
+  body{padding:0 0 env(safe-area-inset-bottom);background:var(--bg);display:block}  .wrap{max-width:100%}
   .banner{border-radius:0;padding:26px 16px 62px}
   .card{border-left:none;border-right:none;border-radius:0 0 0 0;margin-top:-40px;padding:0 14px 18px}
   .logo{width:88px;height:88px}
   .banner h1{font-size:19px}
+}
+@media (max-width:359px){
+  .footer{font-size:8.5px}
+  .footer img{width:20px;height:20px}
 }
 @media (prefers-reduced-motion:reduce){.mic-btn.recording{animation:none}.toast{transition:none}}
 </style>
@@ -157,10 +160,10 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
 <body>
 <div class="wrap">
   <div class="banner">
-    <div class="badge"><span class="live"></span> Tổ dân phố tiếp nhận thông tin 24/7</div><br>
+    <div class="badge"><span class="live"></span> TỔ DÂN PHỐ LẮNG NGHE DÂN NÓI</div><br>
     <img src="logo.jpg" alt="Logo Tổ Dân Phố Khê Khẩu" class="logo">
     <h1>HÒM THƯ GÓP Ý <span>GIỌNG NÓI</span></h1>
-    <p>Tổ Dân Phố Khê Khẩu – Phường Trần Nhân Tông<br>Thành phố Hải Phòng</p>
+    <p>Tổ Dân Phố Khê Khẩu, Phường Trần Nhân Tông, TP. Hải Phòng</p>
   </div>
 
   <div class="card">
@@ -181,7 +184,7 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
     <div class="channels">
       <div class="channels-title"><i class="fa-solid fa-bullhorn"></i> THEO DÕI CÁC KÊNH THÔNG TIN CHÍNH THỨC CỦA TDP</div>
       <div class="sos-btns">
-        <a href="https://www.facebook.com/KheKhauTNT" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i>Nhóm<br>Facebook</a>
+        <a href="https://www.facebook.com/KheKhauTNT" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i>Fanpage<br>Facebook</a>
         <a href="https://zalo.me/g/ansjdc933" target="_blank" rel="noopener"><i class="fa-solid fa-comments"></i>Nhóm<br>Zalo</a>
         <a href="https://tammi.vn/group/qr/1790147905011" target="_blank" rel="noopener"><i class="fa-solid fa-users"></i>Nhóm<br>Tammi</a>
       </div>
@@ -247,7 +250,7 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
 
     <div class="footer">
       <img src="logo.jpg" alt="logo nhỏ">
-      <span>TDP Khê Khẩu – P. Trần Nhân Tông, TP. Hải Phòng</span>
+      <span>Tổ Dân Phố Khê Khẩu, Phường Trần Nhân Tông, TP. Hải Phòng</span>
     </div>
   </div>
 </div>
