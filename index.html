@@ -113,7 +113,6 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
   box-shadow:0 10px 24px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;gap:9px}
 .btn-submit:active{transform:scale(.99)}
 .btn-submit:disabled{opacity:.6;cursor:wait}
-.secure{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11.5px;color:var(--muted)}
 .sos{background:linear-gradient(135deg,#991b1b,#dc2626);border-radius:14px;padding:12px;margin-top:14px;color:#fff}
 .sos-title{font-size:12.5px;font-weight:800;text-align:center;margin-bottom:10px;line-height:1.5}
 .sos-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
@@ -245,8 +244,12 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Gửi phản ánh về Tổ Dân Phố</button>
-      <div class="secure"><i class="fa-solid fa-lock"></i> Thông tin được gửi thẳng về Tổ Dân Phố</div>
     </form>
+
+    <details class="contact-more">
+      <summary><i class="fa-solid fa-book-open"></i> Danh bạ Ban Chi ủy và các đoàn thể TDP <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <img src="Thông Tin Ban Chi Uỷ.jpg" alt="Danh bạ Ban Chi ủy và các chi hội, đoàn thể Tổ Dân Phố Khê Khẩu" loading="lazy">
+    </details>
 
     <div class="footer">
       <img src="logo.jpg" alt="logo nhỏ">
@@ -518,7 +521,7 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
             timestamp: new Date().toISOString(),
             status: 'pending'
         };
-        updates['daily/' + phone + '/' + day] = true;
+        updates['daily/' + phone + '/' + day] = firebase.database.ServerValue.increment(1);
 
         database.ref().update(updates).then(() => {
             markSent();
@@ -539,7 +542,7 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
             });
         }).catch((err) => {
             if (err && err.code === 'PERMISSION_DENIED') {
-              showToast('SĐT này hôm nay đã gửi phản ánh rồi — mai gửi tiếp nhé.');
+              showToast('SĐT này hôm nay đã gửi đủ 3 phản ánh rồi — mai gửi tiếp nhé.');
             } else {
               showToast('Lỗi gửi dữ liệu: ' + (err && err.message || err));
             }
@@ -555,15 +558,19 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
 
 <!--
   FIREBASE RULES — CHỐNG SPAM THEO SĐT (dán vào Firebase Console > Realtime Database > Rules > Publish):
-  Mỗi SĐT chỉ gửi được 1 phản ánh/ngày. Ai gửi lần 2 trong ngày sẽ bị từ chối và web báo
-  "SĐT này hôm nay đã gửi phản ánh rồi". Không tốn phí, không cần backend.
+  Mỗi SĐT gửi tối đa 3 phản ánh/ngày. Gửi lần 4 sẽ bị từ chối và web báo đã gửi đủ.
+  Không tốn phí, không cần backend. (Đã đổi từ 1 lên 3 — nhớ dán lại đè lên Rules cũ.)
 
   {
     "rules": {
       "feedbacks": { ".read": false, ".write": true },
       "daily": {
         "$phone": {
-          "$day": { ".read": false, ".write": "!data.exists()" }
+          "$day": {
+            ".read": false,
+            ".write": true,
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 3 && (!data.exists() || newData.val() === data.val() + 1)"
+          }
         }
       }
     }
