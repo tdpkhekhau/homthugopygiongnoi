@@ -86,6 +86,10 @@ label i{color:var(--purple-600);margin-right:5px}
 .mic-hint{display:inline-block;margin-top:12px;font-weight:700;font-size:13px;color:var(--purple-700);
   background:#f1eafe;border-radius:999px;padding:7px 14px}
 .mic-hint.listening{color:#b91c1c;background:#fee2e2}
+.rec-toggle{display:inline-flex;align-items:center;gap:8px;margin-top:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--purple-700),#8b5cf6);color:#fff;font-weight:800;font-size:14px;
+  border-radius:999px;padding:12px 22px;min-height:48px;box-shadow:0 6px 16px rgba(109,40,217,.35)}
+.rec-toggle.stop{background:linear-gradient(135deg,#b91c1c,#ef4444);box-shadow:0 6px 16px rgba(220,38,38,.35)}
 textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);font-size:16px;line-height:1.7;padding:14px}
 .textarea-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
 .btn-clear{background:#fff;color:var(--red);border:1.5px solid #ffb4ae;min-height:44px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -209,7 +213,10 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
           <button type="button" class="mic-btn" id="micBtn" aria-label="Bắt đầu ghi âm giọng nói">
             <i class="fa-solid fa-microphone"></i>
           </button><br>
-          <div class="mic-hint" id="micHint">Chạm vào micro để bắt đầu nói</div>
+          <div class="mic-hint" id="micHint">Chạm vào micro để bắt đầu nói</div><br>
+          <button type="button" class="rec-toggle" id="recToggle">
+            <i class="fa-solid fa-circle-play"></i> Bấm để BẮT ĐẦU ghi âm
+          </button>
         </div>
         <div style="margin-top:12px">
           <label for="speechText"><i class="fa-solid fa-pen-to-square"></i>Nội dung (tự gõ hoặc từ giọng nói)</label>
@@ -294,27 +301,45 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.lang = 'vi-VN';
-        recognition.continuous = true;
+        recognition.continuous = false; // ngắt câu: nói xong câu tự mở lại — tránh lỗi nhân đôi chữ của Chrome Android
         recognition.interimResults = true;
 
-        // Dựng lại toàn bộ từ đầu mỗi lần — không cộng dồn nên Chrome có gửi trùng cũng không lặp từ
+        // Mỗi lượt chỉ có 1 câu nên dựng lại không thể trùng; giữ nguyên xuống dòng người dùng tự gõ
         recognition.onresult = (event) => {
             let text = '';
             for (let i = 0; i < event.results.length; i++) {
                 text += event.results[i][0].transcript;
             }
-            speechText.value = recordBase + text;
+            speechText.value = (recordBase + text).replace(/[ \t]+/g, ' ');
             updateCharCount();
         };
 
-        recognition.onerror = () => stopRecording();
-        recognition.onend = () => { if (isRecording) stopRecording(); };
+        recognition.onerror = (e) => {
+            if (e && (e.error === 'not-allowed' || e.error === 'service-not-allowed')) stopRecording();
+        };
+        recognition.onend = () => {
+            if (!isRecording) return; // người dùng bấm DỪNG thì thôi, còn không tự mở lại để nói tiếp
+            recordBase = speechText.value ? speechText.value.replace(/\s+$/,'') + ' ' : '';
+            try { recognition.start(); } catch (e) { /* đã chạy rồi thì thôi */ }
+        };
     } else {
         micHint.textContent = 'Trình duyệt không hỗ trợ micro — vui lòng gõ chữ';
         micHint.classList.remove('listening');
     }
 
-    micBtn.addEventListener('click', () => {
+    // Một nút bấm để bật/tắt — KHÔNG cần giữ như Zalo. Micro tròn và nút chữ dùng chung.
+    function setRecUI() {
+        micBtn.classList.toggle('recording', isRecording);
+        micHint.textContent = isRecording ? 'Đang ghi âm... bấm DỪNG khi nói xong' : 'Chạm vào micro để bắt đầu nói';
+        micHint.classList.toggle('listening', isRecording);
+        const t = document.getElementById('recToggle');
+        t.classList.toggle('stop', isRecording);
+        t.innerHTML = isRecording
+          ? '<i class="fa-solid fa-square"></i> Bấm để DỪNG ghi âm'
+          : '<i class="fa-solid fa-circle-play"></i> Bấm để BẮT ĐẦU ghi âm';
+    }
+
+    function toggleRecording() {
         if (!recognition) {
             showToast('Trình duyệt không hỗ trợ giọng nói — dùng Chrome hoặc Edge');
             return;
@@ -325,19 +350,18 @@ textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);
                 recordBase = speechText.value ? speechText.value.replace(/\s+$/,'') + ' ' : '';
                 recognition.start();
                 isRecording = true;
-                micBtn.classList.add('recording');
-                micHint.textContent = 'Đang lắng nghe... chạm lại để dừng';
-                micHint.classList.add('listening');
+                setRecUI();
             } catch (err) { /* mic bận */ }
         } else { stopRecording(); }
-    });
+    }
+
+    micBtn.addEventListener('click', toggleRecording);
+    document.getElementById('recToggle').addEventListener('click', toggleRecording);
 
     function stopRecording() {
         isRecording = false;
         if (recognition) try{ recognition.stop(); }catch(e){}
-        micBtn.classList.remove('recording');
-        micHint.textContent = 'Chạm vào micro để bắt đầu nói';
-        micHint.classList.remove('listening');
+        setRecUI();
     }
 
     function updateCharCount() {
