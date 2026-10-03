@@ -21,6 +21,7 @@
 html{-webkit-text-size-adjust:100%}
 body{
   font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;color:var(--ink);
+  text-wrap:pretty;
   background:
     radial-gradient(600px 300px at 10% -5%, #e9defc 0%, transparent 60%),
     radial-gradient(600px 300px at 100% 0%, #f7ecc8 0%, transparent 55%),
@@ -71,7 +72,7 @@ label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
 label i{color:var(--purple-600);margin-right:5px}
 .req{color:var(--red)}
 .form-control{width:100%;padding:13px 14px;border:1.5px solid #d9d3ea;border-radius:12px;font-size:16px;outline:none;background:#faf9fe;transition:border .15s,box-shadow .15s;max-width:100%}
-.form-control::placeholder{color:#a5a0b8;font-size:14px}
+.form-control::placeholder{color:#8f899e;font-size:14.5px;line-height:1.7}
 .form-control:focus{border-color:var(--purple-600);box-shadow:0 0 0 3px rgba(109,40,217,.13);background:#fff}
 .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
 /* Mic */
@@ -85,7 +86,7 @@ label i{color:var(--purple-600);margin-right:5px}
 .mic-hint{display:inline-block;margin-top:12px;font-weight:700;font-size:13px;color:var(--purple-700);
   background:#f1eafe;border-radius:999px;padding:7px 14px}
 .mic-hint.listening{color:#b91c1c;background:#fee2e2}
-textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
+textarea.form-control{height:150px;resize:none;background:#fff;color:var(--ink);font-size:16px;line-height:1.7;padding:14px}
 .textarea-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
 .btn-clear{background:#fff;color:var(--red);border:1.5px solid #ffb4ae;min-height:44px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 /* Image */
@@ -288,7 +289,7 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isRecording = false;
-    let finalTranscript = '';
+    let recordBase = ''; // chữ đã có trước khi bấm micro — giữ nguyên, chỉ nối thêm
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -296,15 +297,13 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
         recognition.continuous = true;
         recognition.interimResults = true;
 
-        // Chỉ cộng dồn kết quả MỚI (resultIndex) — bản cũ duyệt lại từ đầu nên lặp từ
+        // Dựng lại toàn bộ từ đầu mỗi lần — không cộng dồn nên Chrome có gửi trùng cũng không lặp từ
         recognition.onresult = (event) => {
-            let interim = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const text = event.results[i][0].transcript;
-                if (event.results[i].isFinal) finalTranscript += text;
-                else interim += text;
+            let text = '';
+            for (let i = 0; i < event.results.length; i++) {
+                text += event.results[i][0].transcript;
             }
-            speechText.value = finalTranscript + interim;
+            speechText.value = recordBase + text;
             updateCharCount();
         };
 
@@ -323,7 +322,7 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
         if (!isRecording) {
             try {
                 // Nối tiếp vào chữ đã có (tự gõ hoặc lần nói trước), không ghi đè
-                finalTranscript = speechText.value ? speechText.value + ' ' : '';
+                recordBase = speechText.value ? speechText.value.replace(/\s+$/,'') + ' ' : '';
                 recognition.start();
                 isRecording = true;
                 micBtn.classList.add('recording');
@@ -349,7 +348,7 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
     speechText.addEventListener('input', updateCharCount);
     document.getElementById('fullname').addEventListener('input', refreshSteps);
     document.getElementById('phone').addEventListener('input', refreshSteps);
-    clearBtn.addEventListener('click', () => { speechText.value = ''; finalTranscript = ''; updateCharCount(); });
+    clearBtn.addEventListener('click', () => { speechText.value = ''; updateCharCount(); });
 
     const MAX_IMAGES = 5;
     let attachedImages = [];
@@ -405,9 +404,34 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
         renderPreviews();
     }
 
-    // Gửi email về Gmail Tổ Dân Phố qua FormSubmit (miễn phí, không backend).
-    // Ảnh base64 quá nặng nên KHÔNG gửi qua email — xem ảnh trong Firebase.
-    function sendMailNotification({fullname, phone, content, imageCount}) {
+    // Up ảnh lên ImgBB để lấy link xem trực tiếp trong email.
+    // Lấy key miễn phí tại https://api.imgbb.com/ rồi dán vào dưới đây. Bỏ trống = giữ cách cũ.
+    const IMGBB_KEY = '';
+
+    function uploadImages(base64List) {
+      if (!IMGBB_KEY || !base64List.length) return Promise.resolve([]);
+      return Promise.all(base64List.map(src =>
+        fetch('https://api.imgbb.com/1/upload', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams({key: IMGBB_KEY, image: (src.split(',')[1] || src)})
+        }).then(r => r.json()).then(j => (j && j.data && j.data.display_url) || '').catch(() => '')
+      )).then(urls => urls.filter(Boolean));
+    }
+
+    // Gửi mail kèm ảnh HIỆN TRỰC TIẾP trong Gmail qua Google Apps Script (Gmail TDP tự gửi cho mình).
+    // Cách bật: tạo Apps Script (code tôi gửi trong tin nhắn), Deploy > Web app > dán URL vào dưới đây.
+    // Bỏ trống = dùng FormSubmit như cũ (ảnh xem qua link).
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbydD77P4xJY7jnJOCO-MM8vn_J43Nsgwt49ob0kukyWV6pna1W84ePPZLdD3Ky1uirZNA/exec';
+
+    function sendMailViaScript({fullname, phone, content, images}) {
+      return fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain;charset=utf-8'},
+        body: JSON.stringify({fullname, phone, content, images, time: new Date().toLocaleString('vi-VN')})
+      }).then(r => r.json()).then(j => { if (!j || !j.ok) throw new Error((j && j.error) || 'script'); });
+    }
+    function sendMailNotification({fullname, phone, content, imageCount, imageUrls}) {
       return fetch('https://formsubmit.co/ajax/khekhau.trannhantong.hp@gmail.com', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
@@ -418,7 +442,9 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
           'Họ và tên': fullname,
           'Số điện thoại': phone,
           'Nội dung': content || '(chỉ gửi kèm ảnh)',
-          'Số ảnh minh chứng': imageCount ? `${imageCount} ảnh — xem trong Firebase` : 'Không',
+          'Ảnh minh chứng': imageUrls.length
+            ? imageUrls.map((u, i) => `Ảnh ${i + 1}: ${u}`).join('\n')
+            : (imageCount ? `${imageCount} ảnh — xem trong Firebase` : 'Không'),
           'Thời gian': new Date().toLocaleString('vi-VN')
         })
       }).then(r => { if (!r.ok) throw new Error('mail ' + r.status); });
@@ -452,8 +478,8 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang gửi...';
 
-        // Ghi 2 nơi cùng lúc: phản ánh + mốc chống spam theo SĐT/ngày.
-        // Cần dán Firebase Rules (xem cuối file) thì mốc daily mới có tác dụng chặn.
+        // Có Apps Script: gửi thẳng kèm ảnh inline, khỏi up ImgBB. Chưa có: up ImgBB lấy link như cũ.
+        const sendAll = (imageUrls) => {
         const day = new Date().toISOString().slice(0, 10);
         const key = database.ref('feedbacks').push().key;
         const updates = {};
@@ -461,6 +487,7 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
             fullname, phone, content,
             images: attachedImages,
             imageUrl: attachedImages[0] || '',
+            imageUrls: imageUrls,
             timestamp: new Date().toISOString(),
             status: 'pending'
         };
@@ -468,15 +495,18 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
 
         database.ref().update(updates).then(() => {
             markSent();
-            showToast('Gửi thành công! Tham gia nhóm Tammi để nhận kết quả.');
+            showToast('Đã Gửi Phản Ánh Thành Công!');
             const sentImageCount = attachedImages.length;
+            const sentImages = attachedImages;
             document.getElementById('feedbackForm').reset();
             speechText.value = '';
-            finalTranscript = '';
             clearImages();
             updateCharCount();
             // Gửi email nền — lỗi mail không làm mất phản ánh đã lưu
-            sendMailNotification({fullname, phone, content, imageCount: sentImageCount}).catch((mailErr) => {
+            const mail = APPS_SCRIPT_URL
+              ? sendMailViaScript({fullname, phone, content, images: sentImages})
+              : sendMailNotification({fullname, phone, content, imageCount: sentImageCount, imageUrls});
+            mail.catch((mailErr) => {
               console.error('Gửi mail thất bại:', mailErr);
               showToast('Đã lưu phản ánh, nhưng email thất bại (' + (mailErr && mailErr.message || 'không rõ') + ').');
             });
@@ -490,6 +520,9 @@ textarea.form-control{height:130px;resize:none;line-height:1.6;font-size:15px}
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi phản ánh về Tổ Dân Phố';
         });
+        };
+        if (APPS_SCRIPT_URL) sendAll([]);
+        else uploadImages(attachedImages).then(sendAll);
     });
 </script>
 
